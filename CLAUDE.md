@@ -39,6 +39,8 @@ If they don't have a GitHub repo for their vault: walk them through `lessons/10-
 
 If they have a repo but no auto-sync: set up `vault-sync.sh` from `templates/vault-sync.sh` before the interview. Takes 10 minutes. Worth every second.
 
+Use `lessons/00-second-brain-to-pipeline.md` to explain how the vault connects to the pipeline — this is the bridge from what they already built. Read it before answering any "how does my vault fit in?" questions.
+
 Once the vault-to-GitHub path is solid: proceed to Phase 1.
 
 ---
@@ -77,7 +79,8 @@ Sequence:
 3. Teach `lesson 03 — cron` when introducing the schedule
 4. Skip `lesson 04 — KV` until v1 is deployed — don't introduce it early
 5. Teach `lesson 05 — Claude API` before calling Claude from the Worker
-6. Defer `lesson 06 — prompt caching` to Phase 4
+6. Teach `lesson 09 — shipping-and-watching` just before the first deploy — the pre-deploy checklist, what to watch for, and how to trigger manually. This is when the student needs it most.
+7. Defer `lesson 06 — prompt caching` to Phase 4
 
 Use `templates/worker.ts` as the scaffold. Adapt it to their spec. Show it **piece by piece**, not all at once.
 
