@@ -1,0 +1,22 @@
+{
+  "name": "my-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --config wrangler.toml --name my-pipeline",
+    "tail": "wrangler tail --name my-pipeline",
+    "rollback": "wrangler rollback --name my-pipeline",
+    "trigger": "curl 'http://localhost:8787/__scheduled?cron=0+12+*+*+*'",
+    "secrets:list": "wrangler secret list --name my-pipeline",
+    "db:migrate": "wrangler d1 migrations apply pipeline-decisions --name my-pipeline"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250501.0",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.0.0"
+  }
+}

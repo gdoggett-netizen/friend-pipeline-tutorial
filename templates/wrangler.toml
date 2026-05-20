@@ -1,0 +1,70 @@
+# wrangler.toml — Cloudflare Worker configuration
+#
+# Anything in <ANGLE_BRACKETS> needs to be filled in with your values.
+#
+# Deploy with (always explicit — CANON § 1.1):
+#   npx wrangler deploy --config wrangler.toml --name <your-worker-name>
+
+# The Worker's name. Becomes part of its public URL:
+#   https://<name>.<your-cf-subdomain>.workers.dev
+name = "my-pipeline"
+
+# Entry point
+main = "src/worker.ts"
+
+# Cloudflare's runtime version. Use a recent date.
+compatibility_date = "2026-05-01"
+
+# Node.js compatibility — needed for @anthropic-ai/sdk and most npm packages.
+compatibility_flags = ["nodejs_compat"]
+
+# Cron triggers. UTC, always. See lessons/03-what-is-cron.md.
+#
+# Examples:
+#   "0 12 * * *"    daily at 12:00 UTC (= ~7–8am US Eastern)
+#   "0 12 * * 1-5"  weekdays at 12:00 UTC
+#   "0 */4 * * *"   every 4 hours (for the heartbeat watcher)
+#   "0 11 * * *"    daily at 11:00 UTC (= ~6–7am US Eastern)
+[triggers]
+crons = [
+  "0 12 * * *",   # main pipeline — set to YOUR preferred UTC time
+  "0 */4 * * *",  # heartbeat watcher — every 4 hours, don't change this
+]
+
+# KV namespace for small state (heartbeats, last-run flags, proposal text).
+# Create with:
+#   npx wrangler kv namespace create PIPELINE_STATE --name my-pipeline
+# Then paste the printed id below.
+[[kv_namespaces]]
+binding = "PIPELINE_STATE"
+id = "<paste-kv-namespace-id-here>"
+
+# D1 database for decisions log, run log, alerts log.
+# Create with:
+#   npx wrangler d1 create pipeline-decisions
+# Then paste the printed database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "pipeline-decisions"
+database_id = "<paste-d1-database-id-here>"
+
+# R2 bucket for blobs (HTML reports, PDFs). Uncomment when needed.
+# Create with:
+#   npx wrangler r2 bucket create pipeline-reports
+# [[r2_buckets]]
+# binding = "REPORTS"
+# bucket_name = "pipeline-reports"
+
+# Non-secret environment variables. Visible in logs — do NOT put secrets here.
+[vars]
+TIMEZONE_DESCRIPTION = "12:00 UTC = ~7–8am US Eastern"  # update this to your timezone
+TOP_N = "3"
+WORKER_BASE_URL = "https://my-pipeline.<your-cf-subdomain>.workers.dev"
+
+# Secrets are NOT defined here. Set them via:
+#   npx wrangler secret put ANTHROPIC_API_KEY --name my-pipeline
+#   npx wrangler secret put GITHUB_TOKEN --name my-pipeline
+#   npx wrangler secret put RESEND_API_KEY --name my-pipeline   (if using Resend for email)
+#   npx wrangler secret put TELEGRAM_BOT_TOKEN --name my-pipeline  (if using Telegram)
+#
+# Read in Worker code as: env.ANTHROPIC_API_KEY, env.GITHUB_TOKEN, etc.
